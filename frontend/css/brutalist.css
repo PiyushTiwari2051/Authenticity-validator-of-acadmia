@@ -1075,14 +1075,165 @@ footer {
   @page { margin: 2cm; size: A4; }
 }
 
-/* ── RESPONSIVE ────────────────────────────────────────────────────────────── */
+/* ── RESPONSIVE — TABLET (≤768px) ──────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .result-header { flex-direction: column; }
-  .stamp-seal { width: 100px; height: 100px; }
-  .stamp-word { font-size: var(--t-17); }
-  .break-it-body { grid-template-columns: 1fr; }
+  /* Nav: stack wordmark smaller */
+  .nav-inner { height: 56px; }
+  .wordmark-single { font-size: 13px; white-space: normal; line-height: 1.15; max-width: 50%; }
+
+  /* Nav controls: wrap, smaller gaps */
+  .nav-controls { gap: var(--s4); flex-wrap: wrap; justify-content: flex-end; }
+  .nav-btn { padding: 4px var(--s8); font-size: 10px; }
+  .system-status { font-size: 10px; padding: 2px 6px; }
+
+  /* Drop slab: shorter on tablet */
+  .drop-slab { min-height: 40vh; }
+  .drop-slab-label { font-size: var(--t-32); padding: var(--s16); }
+  .drop-slab-sub { font-size: var(--t-12); }
+
+  /* How columns: stack */
   .how-strip { grid-template-columns: 1fr; }
-  .how-col { border-right: none; border-bottom: var(--rule-thin) solid var(--ink); }
+  .how-col { border-right: none; border-bottom: var(--rule-thin) solid var(--ink); padding: var(--s32) var(--s24); }
+  .how-num { font-size: var(--t-48); }
+
+  /* Result: stack header vertically */
+  .result-header { flex-direction: column; padding: var(--s24); }
+  .stamp-seal { width: 110px; height: 110px; }
+  .stamp-word { font-size: var(--t-17); }
+  .verdict-word { font-size: var(--t-32); }
+
+  /* Findings: horizontal scroll on narrow */
+  .findings-wrap { padding: var(--s16); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .findings-table { min-width: 500px; }
+
+  /* Cert meta: single column */
+  .cert-meta-grid { grid-template-columns: 1fr; margin: var(--s16); }
+
+  /* Actions: full width */
+  .result-actions { padding: var(--s16); }
+  .result-actions .btn-primary,
+  .result-actions .btn-secondary { width: 100%; text-align: center; justify-content: center; }
+
+  /* Break-it: single column */
+  .break-it-body { grid-template-columns: 1fr; padding: var(--s16); }
+  .break-it-footer { padding: var(--s12) var(--s16); }
+
+  /* Transparency: 2 cols */
+  .transparency-grid { grid-template-columns: repeat(2, 1fr); }
+  .transparency-section { padding: var(--s32) 0; }
+
+  /* Counter */
+  .counter-number { font-size: var(--t-48); }
+  .counter-band { padding: var(--s16) 0; }
+  .counter-sub { padding: 0 var(--s16); }
+
+  /* Presets */
+  .presets-grid { grid-template-columns: 1fr 1fr; }
+  .presets-strip { padding: var(--s12) var(--s16); }
+
+  /* Ledger */
+  .ledger-header { flex-direction: column; gap: var(--s4); padding: var(--s8) var(--s12); }
+  .ledger-item { padding: var(--s8) var(--s12); font-size: var(--t-12); }
+  .step-icon { width: 16px; height: 16px; font-size: 9px; margin-right: var(--s8); }
+
+  /* Footer */
+  .footer-inner { flex-direction: column; text-align: center; }
+}
+
+/* ── RESPONSIVE — PHONE (≤480px) ───────────────────────────────────────────── */
+@media (max-width: 480px) {
+  html { font-size: 15px; }
+
+  /* Nav: tighter */
+  .nav-inner { height: 48px; gap: var(--s4); }
+  .wordmark-single { font-size: 11px; max-width: 45%; }
+  .nav-controls { gap: 3px; }
+  .nav-btn { padding: 3px 6px; font-size: 9px; box-shadow: 2px 2px 0 var(--ink); }
+  .system-status { font-size: 9px; padding: 2px 4px; }
+
+  /* Drop slab: compact */
+  .drop-slab { min-height: 35vh; box-shadow: 4px 4px 0 var(--ink); }
+  .drop-slab-label { font-size: var(--t-22); padding: var(--s12); }
+  .drop-slab-sub { font-size: 11px; padding: 0 var(--s8); }
+  .drop-slab-actions { gap: var(--s8); }
+  .btn-primary { padding: var(--s8) var(--s16); font-size: 12px; box-shadow: 4px 4px 0 var(--ink); }
+  .btn-secondary { padding: var(--s8) var(--s12); font-size: 10px; box-shadow: 2px 2px 0 var(--ink); }
+
+  /* Formats bar: wrap */
+  .formats-bar { flex-wrap: wrap; justify-content: center; font-size: 10px; }
+  .format-tag { font-size: 10px; padding: 1px 5px; }
+  .retention-note { font-size: 10px; }
+
+  /* Presets: single column */
+  .presets-grid { grid-template-columns: 1fr; }
+  .preset-btn { font-size: 11px; padding: var(--s8); box-shadow: 2px 2px 0 var(--ink); }
+
+  /* How columns: tighter */
+  .how-col { padding: var(--s24) var(--s16); }
+  .how-num { font-size: var(--t-32); }
+  .how-title { font-size: var(--t-17); }
+  .how-desc { font-size: 14px; }
+
+  /* Result */
+  .result-header { padding: var(--s16); gap: var(--s16); }
+  .verdict-word { font-size: var(--t-22); }
+  .verdict-headline { font-size: 14px; }
+  .stamp-seal { width: 90px; height: 90px; }
+  .stamp-word { font-size: 14px; }
+  .stamp-id { font-size: 8px; }
+  .road-badge { font-size: 10px; }
+
+  /* Findings */
+  .findings-wrap { padding: var(--s12); }
+
+  /* Counter */
+  .counter-number { font-size: var(--t-32); }
+  .counter-label { font-size: 10px; padding: 0 var(--s8); }
+  .counter-sub { font-size: 10px; padding: 0 var(--s8); }
+
+  /* Transparency: single column */
+  .transparency-grid { grid-template-columns: 1fr; }
+  .transparency-cell { padding: var(--s16); }
+  .transparency-cell-value { font-size: 14px; }
+
+  /* Break it */
+  .break-it-header { font-size: 10px; padding: var(--s8); }
+  .break-panel-code { font-size: 10px; min-height: 60px; padding: var(--s8); }
+
+  /* Ledger */
+  .ledger-item .step-label { font-size: 11px; }
+
+  /* Dialog */
+  .dialog-box { padding: var(--s16); width: 95%; }
+  .dialog-title { font-size: var(--t-17); }
+  .shortcut-row { font-size: 12px; }
+  .shortcut-key { font-size: 10px; }
+}
+
+/* ── TOUCH DEVICE IMPROVEMENTS ─────────────────────────────────────────────── */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets (44px minimum per WCAG) */
+  .nav-btn { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; }
+  .preset-btn { min-height: 44px; }
+  .btn-primary, .btn-secondary { min-height: 44px; }
+
+  /* Remove hover effects on touch (no hover state sticks) */
+  .drop-slab:hover { background: var(--paper); }
+  .nav-btn:hover { background: var(--paper); }
+  .btn-secondary:hover { background: var(--paper); }
+  .preset-btn:hover { background: var(--paper); }
+
+  /* Active states still work */
+  .drop-slab:active { background: var(--blue); }
+  .nav-btn:active { background: var(--blue); }
+  .preset-btn:active { background: var(--blue); }
+}
+
+/* ── LANDSCAPE PHONE ───────────────────────────────────────────────────────── */
+@media (max-height: 500px) and (orientation: landscape) {
+  .drop-slab { min-height: 60vh; }
+  .hero-sub { display: none; }
+  .nav-inner { height: 44px; }
 }
 
 /* ── LINK STYLES ───────────────────────────────────────────────────────────── */

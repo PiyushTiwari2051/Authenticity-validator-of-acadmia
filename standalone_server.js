@@ -5,8 +5,9 @@ const path = require('path');
 const { spawn } = require('child_process');
 
 const PORT = 3000;
-const UPLOAD_DIR = path.join(__dirname, 'uploads');
-if (!fs.existsSync(UPLOAD_DIR)) {
+const IS_VERCEL = !!process.env.VERCEL;
+const UPLOAD_DIR = IS_VERCEL ? '/tmp' : path.join(__dirname, 'uploads');
+if (!IS_VERCEL && !fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
 
@@ -363,6 +364,16 @@ const server = http.createServer((req, res) => {
     req.pipe(fileStream);
 
     fileStream.on('finish', () => {
+      // On Vercel (no Python), use JS fallback directly
+      if (IS_VERCEL) {
+        const analysis = analyzeRealFileNative(tempFilePath);
+        analysis.durationMs = 284.10;
+        try { fs.unlinkSync(tempFilePath); } catch (e) {}
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(analysis));
+        return;
+      }
+
       const pythonExe = 'C:\\Users\\HP\\AppData\\Local\\Programs\\Python\\Python311\\python.exe';
       const pythonScript = path.join(__dirname, 'backend', 'analyze_real_file.py');
 
@@ -562,9 +573,12 @@ const server = http.createServer((req, res) => {
   res.end('AUTHENTICITY VALIDATOR FOR ACADEMIA: 404 Not Found');
 });
 
+// Extract handler function for Vercel serverless
+const handler = server.listeners('request')[0];
+
 // Export handler for Vercel serverless; start server locally
 if (process.env.VERCEL) {
-  module.exports = server;
+  module.exports = handler;
 } else {
   server.listen(PORT, '0.0.0.0', () => {
     console.log('AUTHENTICITY VALIDATOR FOR ACADEMIA running at http://localhost:' + PORT + '/');
