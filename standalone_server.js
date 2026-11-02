@@ -562,6 +562,11 @@ const server = http.createServer((req, res) => {
   res.end('AUTHENTICITY VALIDATOR FOR ACADEMIA: 404 Not Found');
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log('AUTHENTICITY VALIDATOR FOR ACADEMIA running at http://localhost:' + PORT + '/');
-});
+// Export handler for Vercel serverless; start server locally
+if (process.env.VERCEL) {
+  module.exports = server;
+} else {
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log('AUTHENTICITY VALIDATOR FOR ACADEMIA running at http://localhost:' + PORT + '/');
+  });
+}
