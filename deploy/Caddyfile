@@ -1,0 +1,26 @@
+:80 {
+    encode gzip zstd
+
+    # Public Verification API
+    handle /api/* {
+        reverse_proxy api:8000
+    }
+
+    # Health probes
+    handle /healthz {
+        reverse_proxy api:8000
+    }
+    handle /readyz {
+        reverse_proxy api:8000
+    }
+
+    # Well-known keys & revocations
+    handle /.well-known/* {
+        reverse_proxy api:8000
+    }
+
+    # Frontend UI
+    handle {
+        reverse_proxy web:3000
+    }
+}

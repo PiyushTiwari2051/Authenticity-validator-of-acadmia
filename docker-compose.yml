@@ -1,0 +1,165 @@
+services:
+  caddy:
+    image: caddy:2.8-alpine
+    container_name: sanad_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+      web:
+        condition: service_started
+    networks:
+      - sanad_net
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sanad_web
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - sanad_net
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: sanad_api
+    restart: unless-stopped
+    command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
+    environment:
+      - SANAD_ENV=development
+      - SANAD_DATABASE_URL=postgresql+asyncpg://sanad_app:sanad_secret_pw@postgres:5432/sanad_db
+      - SANAD_REDIS_URL=redis://redis:6379/0
+      - SANAD_S3_ENDPOINT=http://minio:9000
+      - SANAD_S3_ACCESS_KEY=sanad_minio_admin
+      - SANAD_S3_SECRET_KEY=sanad_minio_secure_pw
+      - SANAD_S3_BUCKET=sanad-documents
+      - SANAD_JWT_SECRET=dev_jwt_secret_change_in_production_32bytes_min
+      - SANAD_KEK=dev_kek_32bytes_aes_gcm_must_be_set_in_env_securely!
+      - SANAD_CANONICAL_HOST=localhost
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - sanad_net
+
+  worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: sanad_worker
+    restart: unless-stopped
+    command: python -m backend.app.workers.main
+    environment:
+      - SANAD_ENV=development
+      - SANAD_DATABASE_URL=postgresql+asyncpg://sanad_app:sanad_secret_pw@postgres:5432/sanad_db
+      - SANAD_REDIS_URL=redis://redis:6379/0
+      - SANAD_S3_ENDPOINT=http://minio:9000
+      - SANAD_S3_ACCESS_KEY=sanad_minio_admin
+      - SANAD_S3_SECRET_KEY=sanad_minio_secure_pw
+      - SANAD_S3_BUCKET=sanad-documents
+      - SANAD_KEK=dev_kek_32bytes_aes_gcm_must_be_set_in_env_securely!
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - sanad_net
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: sanad_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=sanad_db
+      - POSTGRES_USER=sanad_app
+      - POSTGRES_PASSWORD=sanad_secret_pw
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sanad_app -d sanad_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sanad_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: sanad_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - sanad_net
+
+  minio:
+    image: minio/minio:RELEASE.2024-05-10T01-41-38Z
+    container_name: sanad_minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=sanad_minio_admin
+      - MINIO_ROOT_PASSWORD=sanad_minio_secure_pw
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sanad_net
+
+networks:
+  sanad_net:
+    driver: bridge
+
+volumes:
+  pg_data:
+  redis_data:
+  minio_data:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,71 @@
+{
+  "hero": {
+    "headline": "Check a certificate before you trust it.",
+    "sentence": "Scan the QR on the page, type its ID, or upload a scan. You get a clear answer, and the reasons behind it.",
+    "placeholder": "Certificate ID, like SND-7K3Q…",
+    "check_button": "Check certificate",
+    "reassurance": "No sign-in needed. Uploaded files are deleted after {days} days.",
+    "camera_button": "Scan camera",
+    "upload_link": "Upload a scan"
+  },
+  "roads": {
+    "road_a_title": "Issued through Sanad",
+    "road_a_desc": "Signed by the institution. Any change breaks it.",
+    "road_b_title": "Paper or scan",
+    "road_b_desc": "We read it, compare it with the institution's record and look for signs of editing. We can warn you. We cannot prove it."
+  },
+  "verdicts": {
+    "VERIFIED_ISSUER_SIGNED": {
+      "headline": "Verified",
+      "sentence": "Signed by {institution} on {date}. Nothing has changed since, and it has not been withdrawn."
+    },
+    "VERIFIED_PENDING_ANCHOR": {
+      "headline": "Verified, sealing in progress",
+      "sentence": "The signature is valid. The record joins the public log in about {minutes} minutes."
+    },
+    "REVOKED": {
+      "headline": "Withdrawn by the institution",
+      "sentence": "{institution} withdrew this certificate on {date}. Reason: {reason}."
+    },
+    "INVALID_SIGNATURE": {
+      "headline": "Do not trust this document",
+      "sentence": "The content does not match what the institution signed."
+    },
+    "ISSUER_NOT_APPROVED": {
+      "headline": "Issuer not approved",
+      "sentence": "The institution that signed this is not approved on Sanad."
+    },
+    "KEY_WINDOW_UNSAFE": {
+      "headline": "Signed with a key later reported unsafe",
+      "sentence": "We cannot show this was signed before the key was reported unsafe."
+    },
+    "NOT_FOUND": {
+      "headline": "No such certificate",
+      "sentence": "We have no certificate with this ID. Check the ID, or ask for the QR version."
+    },
+    "CONSISTENT_WITH_REGISTRY": {
+      "headline": "Matches the record (advisory)",
+      "sentence": "The details on your scan match a record. A scan cannot be proven genuine. Ask for the QR version to be sure."
+    },
+    "NEEDS_REVIEW": {
+      "headline": "Needs a human check",
+      "sentence": "Some details or signs on this scan do not agree. Ask the institution to confirm."
+    },
+    "LIKELY_ALTERED": {
+      "headline": "Likely altered",
+      "sentence": "A key detail contradicts the institution's record."
+    },
+    "CANNOT_VERIFY": {
+      "headline": "Cannot verify",
+      "sentence": "No matching record was found, or the scan was not clear enough to read."
+    }
+  },
+  "actions": {
+    "share": "Share",
+    "print": "Print report",
+    "report": "Report a problem",
+    "verify_another": "Verify another",
+    "copy_id": "Copy ID",
+    "copied": "Copied"
+  }
+}

@@ -1,0 +1,72 @@
+/* Auto-generated from tokens.json - Do Not Hand Edit */
+:root {
+  /* Paper Light Theme */
+  --paper-50: #FAF6EC;
+  --paper-100: #F3EDDD;
+  --paper-200: #E7DFC9;
+  --ink-900: #15191F;
+  --ink-700: #3A424D;
+  --ink-500: #66707C;
+  --neel: #1F2F5C;
+  --sindoor: #C2412D;
+  --haldi: #D8A238;
+  --verified: #1E6B4A;
+  --caution: #9A5B00;
+  --danger: #B3261E;
+  --neutral: #5B6572;
+
+  /* Aliased Semantic Tokens */
+  --bg-page: var(--paper-50);
+  --bg-surface: var(--paper-100);
+  --border-hairline: var(--paper-200);
+  --text-main: var(--ink-900);
+  --text-secondary: var(--ink-700);
+  --text-muted: var(--ink-500);
+
+  /* Spacing Scale (4px Base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+  --space-36: 144px;
+
+  /* Radii */
+  --radius-card: 6px;
+  --radius-input: 6px;
+  --radius-button: 6px;
+  --radius-seal: 50%;
+
+  /* Motion */
+  --dur-instant: 80ms;
+  --dur-fast: 160ms;
+  --dur-base: 240ms;
+  --dur-slow: 400ms;
+  --dur-seal: 1000ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-enter: cubic-bezier(0, 0, 0, 1);
+  --ease-exit: cubic-bezier(0.3, 0, 1, 1);
+
+  /* Shadows */
+  --shadow-paper-lift: 0 1px 0 rgba(21, 25, 31, 0.08), 0 12px 32px -16px rgba(21, 25, 31, 0.12);
+}
+
+[data-theme="dark"] {
+  --bg-page: #0F1318;
+  --bg-surface: #161B22;
+  --border-hairline: #2B3440;
+  --text-main: #ECE7DA;
+  --text-secondary: #AEB6C2;
+  --text-muted: #8892A0;
+
+  --neel: #8FA6E8;
+  --sindoor: #E8674F;
+  --verified: #62C08D;
+  --caution: #E6B35A;
+  --danger: #F08A80;
+  --shadow-paper-lift: 0 1px 0 rgba(0, 0, 0, 0.4), 0 12px 32px -16px rgba(0, 0, 0, 0.6);
+}

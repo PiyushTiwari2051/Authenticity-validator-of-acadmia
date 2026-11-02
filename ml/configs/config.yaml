@@ -1,0 +1,96 @@
+project:
+  name: "sanad-academic-authenticity-ml"
+  version: "1.0.0"
+  random_seeds: [42, 1337, 2026]
+  active_seed: 42
+
+paths:
+  base_dir: "ml"
+  data_dir: "ml/data"
+  manifest_path: "ml/data/MANIFEST.csv"
+  datasheet_path: "ml/data/DATASHEET.md"
+  splits_dir: "ml/data/splits"
+  raw_dir: "ml/data/raw"
+  synthetic_dir: "ml/data/sanad_cert"
+  results_dir: "ml/eval/results"
+  checkpoints_dir: "ml/checkpoints"
+  experiments_log: "ml/eval/experiments.jsonl"
+
+dataset_targets:
+  template_families: 8
+  genuine_synthetic_count: 600
+  tampered_synthetic_count: 1800
+  min_per_recipe: 100
+  physical_captured_count: 120
+  layer2_real_count: 60
+
+recipes:
+  - id: "T1"
+    name: "Manual Field Edit"
+    description: "Hand edit of numeric or textual field (marks, name, date, CGPA)"
+    automated_proxy: true
+  - id: "T2"
+    name: "Scripted Text Replacement"
+    description: "Font-matched typographic replacement with consistent bounding box"
+    automated_proxy: true
+  - id: "T3"
+    name: "Open-Source Inpainting"
+    description: "Patch removal and inpainting refill"
+    automated_proxy: true
+  - id: "T4"
+    name: "AI-Edited Numeric Field"
+    description: "Inpainting field replacement (AIForge-Doc attack vector)"
+    automated_proxy: true
+  - id: "T5"
+    name: "Intrapage Copy-Move"
+    description: "Duplicating legitimate seal, stamp, or digit within the document"
+    automated_proxy: true
+  - id: "T6"
+    name: "Cross-Document Splicing"
+    description: "Splicing signature or crest from an external credential"
+    automated_proxy: true
+  - id: "T7"
+    name: "Careless Typography (Wrong Font/Size)"
+    description: "Obvious typographic and font mismatch"
+    automated_proxy: true
+  - id: "T8"
+    name: "Careful Arithmetic Forgery"
+    description: "Tampering marks while recalculating totals and CGPA to bypass sanity checks"
+    automated_proxy: true
+  - id: "T9"
+    name: "Print-and-Recapture"
+    description: "Tampered document physically re-scanned/re-photographed"
+    automated_proxy: true
+  - id: "T10"
+    name: "Full Re-typeset Regeneration"
+    description: "Zero pixel tampering; forged document entirely regenerated from scratch"
+    automated_proxy: true
+
+model:
+  input_size: [512, 512]
+  backbone: "swin_small_patch4_window7_224"
+  cltd:
+    enabled: true
+    T: 8192
+    quality_range: [75, 100]
+    compression_iterations: [1, 3]
+  training:
+    learning_rate: 0.0003
+    min_learning_rate: 0.00001
+    weight_decay: 0.0001
+    batch_size: 12
+    iterations: 100000
+    binarization_threshold: 0.5
+    early_stopping_patience: 15
+
+fusion:
+  model_type: "gradient_boosted_decision_trees"
+  calibration: "isotonic"
+  target_fpr: 0.01
+  features:
+    - "tamper_mask_coverage"
+    - "tamper_peak_confidence"
+    - "arithmetic_validity"
+    - "ocr_confidence_mean"
+    - "metadata_inconsistency_score"
+    - "registry_hash_match"

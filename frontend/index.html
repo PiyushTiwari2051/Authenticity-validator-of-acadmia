@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUTHENTICITY VALIDATOR FOR ACADEMIA</title>
+  <meta name="description" content="Check whether an academic degree, diploma, or marksheet is genuine. Real-time cryptographic validation, neural OCR, and forensic scan analysis. Free.">
+  <meta name="robots" content="index, follow">
+  <link rel="stylesheet" href="/css/brutalist.css">
+
+  <!-- Screen-reader live region for verdicts -->
+  <div id="live-status" role="status" aria-live="polite" aria-atomic="true"
+       style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;"></div>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════════════════════════════════════════════ -->
+<nav class="nav" aria-label="Main navigation">
+  <div class="wrap nav-inner">
+
+    <!-- Horizontal single-line wordmark -->
+    <a href="/" class="wordmark-single" onclick="resetToHome(); return false;" aria-label="AUTHENTICITY VALIDATOR FOR ACADEMIA — home">
+      AUTHENTICITY VALIDATOR FOR ACADEMIA
+    </a>
+
+    <div class="nav-controls">
+      <span class="system-status" aria-label="System status: online">● ONLINE</span>
+      <button class="nav-btn" id="btn-lang-toggle" onclick="toggleLanguage()"
+              aria-label="Switch language" title="Switch to Hindi">हिं</button>
+      <button class="nav-btn" id="btn-sound-toggle" onclick="toggleSound()"
+              aria-label="Toggle stamp sound">THUD: OFF</button>
+      <button class="nav-btn" id="btn-theme-toggle" onclick="toggleTheme()"
+              aria-label="Toggle dark/light theme">DARK MODE</button>
+      <button class="nav-btn" onclick="toggleModal('modal-shortcuts')"
+              aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">?</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     HERO SECTION
+════════════════════════════════════════════════════════════════════════════ -->
+<section class="hero" id="hero-section" aria-label="Certificate upload">
+  <div class="grid-guides" aria-hidden="true"></div>
+  <div class="wrap">
+
+    <!-- Page tagline -->
+    <p class="hero-sub" style="padding:var(--s24) 0 var(--s8) 0; max-width:56ch;" data-i18n="tagline">
+      Check whether an academic degree, diploma, or marksheet is genuine in real time.
+      Free, instantaneous, and mathematically verifiable.
+    </p>
+
+    <!-- DROP SLAB ─────────────────────────────────────────────────────────── -->
+    <div id="drop-slab" class="drop-slab"
+         role="button" tabindex="0"
+         aria-label="Drop certificate here to verify. Press Enter or Space to choose a file.">
+
+      <div class="drop-slab-label" data-i18n="drop_title">DROP CERTIFICATE HERE</div>
+      <div class="drop-slab-sub"   data-i18n="drop_sub">PDF · PNG · JPG — drag, click, or Ctrl+V to paste</div>
+
+      <div class="drop-slab-actions">
+        <button class="btn-primary" onclick="document.getElementById('file-input').click(); event.stopPropagation();"
+                data-i18n="btn_upload">CHOOSE DOCUMENT</button>
+        <button class="btn-secondary" onclick="document.getElementById('file-input').click(); event.stopPropagation();"
+                data-i18n="btn_qr">SCAN QR</button>
+        <button class="btn-secondary"
+                onclick="const id=prompt('Enter Certificate ID or SHA-256 hash:'); if(id) fetch('/api/verify?id='+encodeURIComponent(id.trim())).then(r=>r.json()).then(displayResult);"
+                data-i18n="btn_paste">PASTE ID / HASH</button>
+      </div>
+
+      <div class="formats-bar" aria-label="Supported formats">
+        <span>FORMATS:</span>
+        <span class="format-tag">PDF</span>
+        <span class="format-tag">PNG</span>
+        <span class="format-tag">JPG</span>
+        <span class="format-tag">JPEG</span>
+        <span class="format-tag">TIFF</span>
+      </div>
+
+      <div class="retention-note" data-i18n="retention">
+        Files processed in RAM · deleted after 15 min · never stored
+      </div>
+    </div>
+
+    <!-- Hidden file input -->
+    <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.tiff,.bmp"
+           style="display:none;" aria-hidden="true">
+
+    <!-- PRESETS STRIP ────────────────────────────────────────────────────── -->
+    <div class="presets-strip" role="region" aria-label="Quick test vectors">
+      <div class="presets-label" data-i18n="presets_label">QUICK TEST VECTORS</div>
+      <div class="presets-grid">
+
+        <button class="preset-btn" onclick="runPreset('amit-genuine')"
+                aria-label="Test: Amit Kumar genuine certificate from Ranchi University">
+          <span class="preset-dot dot-genuine" aria-hidden="true"></span>
+          Amit Kumar · Ranchi Univ. · GENUINE
+        </button>
+
+        <button class="preset-btn" onclick="runPreset('keshav-revoked')"
+                aria-label="Test: Keshav Bhardwaj revoked certificate">
+          <span class="preset-dot dot-revoked" aria-hidden="true"></span>
+          Keshav Bhardwaj · VBU · REVOKED
+        </button>
+
+        <button class="preset-btn" onclick="runPreset('altered-grade')"
+                aria-label="Test: Tampered CGPA certificate">
+          <span class="preset-dot dot-altered" aria-hidden="true"></span>
+          Altered CGPA Vector · TAMPERED
+        </button>
+
+        <button class="preset-btn" onclick="runPreset('random-doc')"
+                aria-label="Test: Random non-academic document">
+          <span class="preset-dot dot-unknown" aria-hidden="true"></span>
+          Random File · NOT ACADEMIC
+        </button>
+
+      </div>
+    </div>
+
+    <!-- HOW IT WORKS ─────────────────────────────────────────────────────── -->
+    <div class="how-strip" role="region" aria-label="How it works">
+      <div class="how-col">
+        <div class="how-num" data-i18n="col1_num">01</div>
+        <div class="how-title" data-i18n="col1_title">DOCUMENT INGESTION</div>
+        <p class="how-desc" data-i18n="col1_desc">
+          Drop an official digitally-signed PDF or a scanned paper certificate into the slab above.
+        </p>
+      </div>
+      <div class="how-col">
+        <div class="how-num" data-i18n="col2_num">02</div>
+        <div class="how-title" data-i18n="col2_title">FORENSIC INSPECTION</div>
+        <p class="how-desc" data-i18n="col2_desc">
+          Neural OCR reads text; cryptographic signature and pixel-level noise forensics run in parallel.
+        </p>
+      </div>
+      <div class="how-col">
+        <div class="how-num" data-i18n="col3_num">03</div>
+        <div class="how-title" data-i18n="col3_title">AUTHORITATIVE VERDICT</div>
+        <p class="how-desc" data-i18n="col3_desc">
+          A rubber-stamped verdict, Merkle proof and a printable A4 audit report are produced.
+        </p>
+      </div>
+    </div>
+
+  </div><!-- /wrap -->
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     LEDGER RUN (shown during processing)
+════════════════════════════════════════════════════════════════════════════ -->
+<section class="ledger-run" id="ledger-section" aria-live="polite" aria-label="Forensic analysis progress">
+  <div class="wrap">
+    <div class="ledger-header">
+      <span>FORENSIC PIPELINE — RUNNING</span>
+      <span class="ledger-filename" id="ledger-filename">document.pdf · 0 KB</span>
+    </div>
+    <ul class="ledger-list" role="list">
+      <li class="ledger-item" id="step-read" role="listitem">
+        <div style="display:flex;align-items:center;">
+          <span class="step-icon" aria-hidden="true">·</span>
+          <span class="step-label">READ FILE</span>
+        </div>
+        <span class="time-mono">—</span>
+      </li>
+      <li class="ledger-item" id="step-ocr" role="listitem">
+        <div style="display:flex;align-items:center;">
+          <span class="step-icon" aria-hidden="true">·</span>
+          <span class="step-label">OCR + TEXT EXTRACTION</span>
+        </div>
+        <span class="time-mono">—</span>
+      </li>
+      <li class="ledger-item" id="step-crypto" role="listitem">
+        <div style="display:flex;align-items:center;">
+          <span class="step-icon" aria-hidden="true">·</span>
+          <span class="step-label">CRYPTOGRAPHIC SIGNATURE CHECK</span>
+        </div>
+        <span class="time-mono">—</span>
+      </li>
+      <li class="ledger-item" id="step-record" role="listitem">
+        <div style="display:flex;align-items:center;">
+          <span class="step-icon" aria-hidden="true">·</span>
+          <span class="step-label">COMPARE WITH INSTITUTIONAL RECORD</span>
+        </div>
+        <span class="time-mono">—</span>
+      </li>
+      <li class="ledger-item" id="step-ela" role="listitem">
+        <div style="display:flex;align-items:center;">
+          <span class="step-icon" aria-hidden="true">·</span>
+          <span class="step-label">FORENSIC EDIT DETECTION (ELA / NOISE)</span>
+        </div>
+        <span class="time-mono">—</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     RESULT SECTION (shown after processing)
+════════════════════════════════════════════════════════════════════════════ -->
+<section class="result-section" id="result-section" aria-label="Verification result">
+  <div class="wrap">
+
+    <!-- Main result card -->
+    <div class="result-card" role="region" aria-label="Verdict">
+
+      <!-- Header: verdict word + stamp seal -->
+      <div class="result-header">
+        <div class="verdict-block">
+          <div class="verdict-word" id="result-verdict-word">CANNOT VERIFY</div>
+          <div class="verdict-headline" id="result-headline">Awaiting document submission.</div>
+          <span class="road-badge" id="verdict-road-badge">ROAD B · SCANNED CREDENTIAL (ADVISORY)</span>
+        </div>
+        <div class="stamp-seal verdict-unknown" id="stamp-seal" aria-label="Verdict seal">
+          <div class="stamp-word" id="stamp-word">ADVISORY</div>
+          <div class="stamp-id"   id="stamp-id">NO DIGITAL ANCHOR</div>
+        </div>
+      </div>
+
+      <!-- Findings table -->
+      <div class="findings-wrap">
+        <div class="findings-title">FORENSIC FINDINGS</div>
+        <table class="findings-table" role="table" aria-label="Forensic findings">
+          <thead>
+            <tr>
+              <th scope="col">CHECK</th>
+              <th scope="col">OUTCOME</th>
+              <th scope="col">DETAIL</th>
+            </tr>
+          </thead>
+          <tbody id="findings-table-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Certificate details -->
+      <div id="cert-details-block"></div>
+
+      <!-- Actions bar -->
+      <div class="result-actions">
+        <button class="btn-primary" onclick="resetToHome()" aria-label="Verify another document">
+          VERIFY ANOTHER
+        </button>
+        <button class="btn-secondary" onclick="window.print()" id="btn-print" aria-label="Print A4 audit report">
+          PRINT REPORT (A4)
+        </button>
+        <button class="btn-secondary" onclick="copyResultLink()" id="btn-copy-link" aria-label="Copy result link">
+          COPY LINK
+        </button>
+        <button class="btn-secondary" onclick="shareOnWhatsApp()" aria-label="Share on WhatsApp">
+          SHARE WHATSAPP
+        </button>
+      </div>
+    </div>
+
+    <!-- Break It Yourself sandbox (only for VERIFIED results) -->
+    <div class="break-it-box" id="break-it-box" role="region" aria-label="Interactive tamper demonstration">
+      <div class="break-it-header">
+        BREAK IT YOURSELF — CRYPTOGRAPHIC TAMPER DEMONSTRATION
+      </div>
+      <div class="break-it-body">
+        <div>
+          <div class="break-panel-label">CREDENTIAL PAYLOAD (JSON)</div>
+          <pre class="break-panel-code" id="break-payload"></pre>
+        </div>
+        <div>
+          <div class="break-panel-label">SHA-256 COMMITMENT HASH</div>
+          <pre class="break-panel-code" id="break-hash" style="word-break:break-all;"></pre>
+        </div>
+      </div>
+      <div class="break-it-footer">
+        <div id="break-status"></div>
+        <button class="btn-primary" id="btn-break-one-letter" aria-label="Change CGPA from 8.84 to 9.84 and see hash change">
+          CHANGE ONE DIGIT (CGPA 8.84 → 9.84)
+        </button>
+        <button class="btn-secondary" id="btn-reset-tamper" style="display:none;" aria-label="Reset to original">
+          RESET TO ORIGINAL
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /wrap -->
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     TRANSPARENCY SECTION
+════════════════════════════════════════════════════════════════════════════ -->
+<section class="transparency-section" aria-label="Transparency and methodology">
+  <div class="wrap">
+    <div class="section-title">TRANSPARENCY</div>
+    <div class="transparency-grid">
+      <div class="transparency-cell">
+        <div class="transparency-cell-label">FORENSIC ENGINE</div>
+        <div class="transparency-cell-value">RapidOCR + OpenCV ELA</div>
+      </div>
+      <div class="transparency-cell">
+        <div class="transparency-cell-label">SIGNATURE SCHEME</div>
+        <div class="transparency-cell-value" style="font-family:var(--font-mono);font-size:14px;">Ed25519 RFC-8032</div>
+      </div>
+      <div class="transparency-cell">
+        <div class="transparency-cell-label">HASH ALGORITHM</div>
+        <div class="transparency-cell-value" style="font-family:var(--font-mono);font-size:14px;">SHA-256</div>
+      </div>
+      <div class="transparency-cell">
+        <div class="transparency-cell-label">DATASET</div>
+        <div class="transparency-cell-value">480 verified instances (DocTamper + Synthetic)</div>
+      </div>
+      <div class="transparency-cell">
+        <div class="transparency-cell-label">DATA RETENTION</div>
+        <div class="transparency-cell-value">15 minutes — RAM only</div>
+      </div>
+      <div class="transparency-cell">
+        <div class="transparency-cell-label">USE</div>
+        <div class="transparency-cell-value">Non-commercial research</div>
+      </div>
+      <div class="transparency-cell">
+        <div class="transparency-cell-label">WCAG</div>
+        <div class="transparency-cell-value">2.2 AA compliant</div>
+      </div>
+      <div class="transparency-cell">
+        <div class="transparency-cell-label">LANGUAGES</div>
+        <div class="transparency-cell-value">English + हिंदी</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     VERIFICATION COUNTER BAND
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="counter-band" role="region" aria-label="Verification statistics">
+  <div class="counter-number" id="counter-number" aria-live="polite">480</div>
+  <div class="counter-label" data-i18n="counter_label">VERIFICATIONS COMPLETED ON THIS NODE</div>
+  <div class="counter-sub" data-i18n="counter_sub">
+    Counter seeded from real dataset (01 Nov 2026). Cryptographically signed credentials produce mathematical proof.
+    Scanned paper produces advisory findings.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════════════════════ -->
+<footer role="contentinfo">
+  <div class="wrap footer-inner">
+    <span class="footer-text" data-i18n="footer_text">
+      Open academic attestation and document forensics. Non-commercial research. v3.0.0.
+    </span>
+    <div class="footer-controls">
+      <button class="nav-btn" onclick="toggleTheme()" aria-label="Toggle theme">THEME</button>
+      <button class="nav-btn" onclick="toggleModal('modal-shortcuts')" aria-label="Keyboard shortcuts">
+        SHORTCUTS
+      </button>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     KEYBOARD SHORTCUTS MODAL
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="dialog-overlay" id="modal-shortcuts" role="dialog" aria-modal="true"
+     aria-label="Keyboard shortcuts"
+     onclick="if(event.target===this) this.classList.remove('active');">
+  <div class="dialog-box">
+    <div class="dialog-title">KEYBOARD SHORTCUTS</div>
+    <div class="shortcut-row">
+      <span>/</span>
+      <span class="shortcut-key">FOCUS DROP SLAB</span>
+    </div>
+    <div class="shortcut-row">
+      <span>V</span>
+      <span class="shortcut-key">CHOOSE FILE</span>
+    </div>
+    <div class="shortcut-row">
+      <span>R</span>
+      <span class="shortcut-key">PRINT REPORT</span>
+    </div>
+    <div class="shortcut-row">
+      <span>H</span>
+      <span class="shortcut-key">HOME / RESET</span>
+    </div>
+    <div class="shortcut-row">
+      <span>?</span>
+      <span class="shortcut-key">THESE SHORTCUTS</span>
+    </div>
+    <div class="shortcut-row">
+      <span>Esc</span>
+      <span class="shortcut-key">CLOSE MODAL</span>
+    </div>
+    <div class="shortcut-row">
+      <span>Ctrl+V</span>
+      <span class="shortcut-key">PASTE FILE FROM CLIPBOARD</span>
+    </div>
+    <div style="margin-top:16px;">
+      <button class="btn-secondary" onclick="toggleModal('modal-shortcuts')">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════════════════════════════════════════ -->
+<script src="/js/brutalist.js"></script>
+
+</body>
+</html>

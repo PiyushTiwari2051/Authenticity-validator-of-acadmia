@@ -1,0 +1,13 @@
+node_modules/
+uploads/
+*.log
+.env
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.hypothesis/
+ml/data/sanad_cert/
+*.tmp
+.DS_Store
+Thumbs.db

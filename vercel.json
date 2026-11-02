@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "standalone_server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/css/(.*)",
+      "dest": "/standalone_server.js"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/standalone_server.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/standalone_server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/standalone_server.js"
+    }
+  ]
+}

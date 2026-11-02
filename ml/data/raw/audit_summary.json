@@ -1,0 +1,56 @@
+[
+  {
+    "name": "DocTamper",
+    "status": "GATED",
+    "licence": "Non-commercial educational only",
+    "date_audited": "2026-11-01 23:39:09"
+  },
+  {
+    "name": "SIDTD",
+    "status": "OPEN",
+    "licence": "CC BY-SA 2.5",
+    "date_audited": "2026-11-01 23:39:09"
+  },
+  {
+    "name": "Find it again!",
+    "status": "RESTRICTED",
+    "licence": "Not stated on page",
+    "date_audited": "2026-11-01 23:39:09"
+  },
+  {
+    "name": "AIForge-Doc",
+    "status": "UNVERIFIED_HOSTING",
+    "licence": "Publicly released without registration",
+    "date_audited": "2026-11-01 23:39:09"
+  },
+  {
+    "name": "Mozhi",
+    "status": "OPEN",
+    "licence": "Academic Citation Only",
+    "date_audited": "2026-11-01 23:39:09"
+  },
+  {
+    "name": "IIIT-Synthetic-M-Hindi",
+    "status": "GATED_LOGIN",
+    "licence": "Pre-training only / All Rights Reserved",
+    "date_audited": "2026-11-01 23:39:09"
+  },
+  {
+    "name": "DocLayNet",
+    "status": "OPEN",
+    "licence": "CDLA-Permissive-1.0",
+    "date_audited": "2026-11-01 23:39:09"
+  },
+  {
+    "name": "RTM (Real Text Manipulation)",
+    "status": "UNVERIFIED_REPOSITORY",
+    "licence": "Not accessible",
+    "date_audited": "2026-11-01 23:39:09"
+  },
+  {
+    "name": "Roboflow Certificate Forgery",
+    "status": "DISCARDED_SAFETY",
+    "licence": "CC BY 4.0 stated",
+    "date_audited": "2026-11-01 23:39:09"
+  }
+]
